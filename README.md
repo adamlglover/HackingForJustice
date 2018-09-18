@@ -12,3 +12,10 @@ The State's Attoneys Office (SAO) has four datasets at the case level - which me
 - [Dispositions](https://datacatalog.cookcountyil.gov/Courts/Dispositions/apwk-dzx8): The disposition data presented in this data reflects the culmination of the fact-finding process that leads to the resolution of a case. Each row represents a charge that has been disposed of.
 - [Initiation](https://datacatalog.cookcountyil.gov/Courts/Initiation/7mck-ehwz): The Initiation results data presented here reflects all of the arrests that came through the door of the State's Attorneys Office (SAO). An initiation is how an arrest turns into a “case” in the courts. Most cases are initiated through a process known as felony review, in which SAO attorneys make a decision whether or not to prosecute. Cases may also be indicted by a grand jury or, in narcotics cases, filed directly by law enforcement (labeled "BOND SET (Narcotics)" in this data). Included in this data set are the defendant counts by initiation and year. This data includes felony cases handled by the Criminal, Narcotics, and Special Prosecution Bureaus. It does not include information about cases processed through the Juvenile Justice and Civil Actions Bureaus.
 - [Intake](https://datacatalog.cookcountyil.gov/Courts/Intake/3k7z-hchi): The intake data presented in this data reflects the cases brought in for review. Each row represents a potential defendant in a case.
+
+
+## Known Data Errors
+
+#### Sentencing Data
+
+- LENGTH_OF_CASE_in_Days has a minimum of -36475 and 338 rows in which that value is less than zero.

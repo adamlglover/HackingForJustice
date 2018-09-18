@@ -111,45 +111,61 @@ This is important, since if we were to simply look at the average age across thi
 ### Columnar Selection
 
 ```{r}
-cases <- select(sentence, CASE_ID, CASE_PARTICIPANT_ID, AGE_AT_INCIDENT, GENDER, RACE, LENGTH_OF_CASE_in_Days)
-dim(cases) # See the number of rows, columns in the data
+cases <- select(sentence, CASE_ID, CASE_PARTICIPANT_ID, AGE_AT_INCIDENT, 
+                GENDER, RACE, LENGTH_OF_CASE_in_Days, INCIDENT_CITY)
+ncol(cases)
 ```
 
-###
+Now, we can grab only the rows that are unique across these values, which should be one participant per case. From that dataframe, we can use various functions for descriptive statistics, like `mean()`, `median()`,  and `fivenum()`.  We use the addition argument `na.rm = TRUE` to tell R to ignore missing values in these calculaions.
 
 ```{r}
 cases <- distinct(cases)
 dim(cases)
 
-mean(cases$AGE_AT_INCIDENT)
-median(cases$LENGTH_OF_CASE_in_Days)
-table(cases$RACE)
-prop.table(table(cases$GENDER))
+mean(cases$AGE_AT_INCIDENT, na.rm=TRUE)
+median(cases$AGE_AT_INCIDENT, na.rm=TRUE)
 ```
 
-### Grouped Aggregation
+So, for any case, we can expect a participant to be aged ```r median(cases$AGE_AT_INCIDENT, na.rm=TRUE)```, with an average age of a participant in a case being ```r median(cases$AGE_AT_INCIDENT, na.rm=TRUE)```.
+
+
+The  `fivenum()` function returns the minimum, 25th percentile, median, 75th percentile, and maximum.
+```{r}
+fivenum(cases$AGE_AT_INCIDENT, na.rm=TRUE)
+```
+
+Take a minute to break apart the second line of code below. Can you intuit what the numbers being returned mean?
 
 ```{r}
-
+prop.table(table(cases$INCIDENT_CITY == "Chicago", useNA="always"))
 ```
 
-Let's 
 
-cases <- group_by(sentence, CASE_ID) 
-summarize(cases, avg_age = mean(AGE_AT_INCIDENT), count=n())
+\pagebreak
 
-## We can see more charges per person at younger ages, so our original histogram was skewed to the left.
+## TO DO NEXT:
+
+Probably the next parts of this to include are:
+
+- Mutate (easy)
+- Arrange (easy)
+- Histogram? Basic Plots? (Only if no one else is)
+- Grouped Aggregation
+- Merging on a different SAO dataset (maybe too much?) Guidance on which dataset would be good. My instinct is initiation and hope CASE_ID or CHARGE_ID works there.
+
+
+We can see more charges per person at younger ages, so our original histogram was skewed to the left. `echo=FALSE` is on here.
+
+```{r ech0=FALSE}
 sentence %>% group_by(CASE_ID) %>% 
   summarize(age = mean(AGE_AT_INCIDENT), count=n()) %>% 
   ggplot(aes(age, count)) + geom_point()
-
-
 
 sentence %>% group_by(CASE_ID, AGE_AT_INCIDENT) %>%
   summarize(count=n()) %>%
   filter(count < 15) %>%
   ggplot(aes(count)) + geom_histogram()
-
+```
 
 
 ```{r}
