@@ -1,0 +1,45 @@
+---
+title: "Hacking for Justice - Introduction to R"
+author: "Alex C. Engler - The University of Chicago"
+date: "Saturday, September 22nd"
+output: 
+  pdf_document
+# html_document: 
+#    fig_caption: false
+urlcolor: blue
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Open RStudio
+
+Since you installed R and RStudio during class, you should simply need to open RStudio (not R) in order to get started. RStudio is a tool to make working in R (the programming language) a bit easier and more intuitive. 
+
+## Download the SAO Data
+
+
+
+\pagebreak 
+ 
+## Pertinent Resources
+
+**Introduction to haven package** [Link](https://blog.rstudio.org/2015/03/04/haven-0-1-0/)
+
+**Introduction to readr package** [Link](https://github.com/tidyverse/readr)
+
+**Introduction to readxl package** [Link](https://github.com/tidyverse/readxl)
+
+**Vignette on dplyr package for Data Manipulation** [Link](https://cran.rstudio.com/web/packages/dplyr/vignettes/introduction.html)
+
+**Data Processing with dplyr & tidyr** [Link](https://rpubs.com/bradleyboehmke/data_wrangling)
+
+**String Manipulation with stringr** [Link](https://cran.r-project.org/web/packages/stringr/vignettes/stringr.html)
+
+***
+
+In the image above [Figure 1], you can see how to navigate to the RStudio Cheat Sheets for R's very useful data manipulation packages, `dplyr` and `tidyr`. These packages, as well as `stringr`, are also covered in detail in the free ebook [R for Data Science](http://r4ds.had.co.nz/transform.html).
+
+
+![Cheat Sheets](./cheat.png)
