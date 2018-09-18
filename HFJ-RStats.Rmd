@@ -28,16 +28,158 @@ The State's Attoneys Office (SAO) has four datasets at the case level - which me
 
 ## Loading Data Into R:
 
-For our introduction, we will use the tidyverse, which is a set of R packages that enable quick and (somewhat) intuitive ways to explore and manipulate date in R. If you have already install the tidyverse using `install.packages("tidyverse")`, then you should just need to run the code below. 
+For our introduction, we will use the tidyverse, which is a set of R packages that enable quick and (somewhat) intuitive ways to explore and manipulate date in R. If you have already install the tidyverse using `install.packages("tidyverse")`, then you should just need to run the code below.
 
 ```{r message=FALSE}
 library(tidyverse)
 ```
 
+Next, load the sentencing data into R. The `read_csv()` function loads the data into R, and the assignment operator `<-` saves the data under the name `sentence`, which we will use to refer to it from here forward. Data loaded into R is called a `dataframe`, and we will use that terminology going forward.
+
+```{r message=FALSE, warning=FALSE}
+# Note: You can write comments in your R code following a hashtag `#`. 
+# Anything after a hashtag will not run, so you can use comments to write 
+# notes to yourself, explaining what your code does (or should do!).
+sentence <- read_csv("Sentencing.csv")
+```
+
+We can use simple functions, like `nrow()` and `ncol` to see how many rows and columns of data there are in this dataframe. Note, you must use all lowercase letters for `sentence` and the function names, as R is case sensitive.
+
+```{r}
+nrow(sentence)
+ncol(sentence)
+```
+
+We can visually inspect our loaded dataframe with the `glimpse()` function. This prints each column, or variable, in the dataset on each row. It also tells us what type of variable is contained in the column (e.g. a `dbl` means a continuous number, whereas a `chr` means characters, which could be letters, numbers or a sentence). Finally, this function shows us some of the first values in each column, listed from left to right.
+
+```{r}
+glimpse(sentence)
+```
+
+\pagebreak
+
+Some of the data is self-explanatory, for instance, the `SENTENCE_TYPE` column contains the type of the sentence that resulted in this judgement. Below, we use the `table()` function to create a frequency table - this tells us every value of the `SENTENCE_TYPE` column and how many times that value appears in the dataset. We use the `$` operator to refer to the `SENTENCE_TYPE` column within the `sentence` dataframe.
+
+```{r}
+table(sentence$SENTENCE_TYPE)
+# or count(sentences, SENTENCE_TYPE)
+```
+
+### Remember to Use the Data Documentation
+
+However, other columns may not be so easily interpreted, and guessing can lead to mistakes. For instance, the `PRIMARY_CHARGE` column has values of "true" and "false", which is not clearly self-explanatory.
+
+It's important to consistently use the data documentation, sometimes called a codebook, to help learn about a dataset. Scrolling down on the [same page we found this data](https://datacatalog.cookcountyil.gov/Courts/Sentencing/tg8v-tm6u), we can see there are short descriptions of what each coulmn contains.
+
+```{r}
+table(sentence$PRIMARY_CHARGE)
+# or count(sentences, PRIMARY_CHARGE)
+```
+
+## Level Of The Data
+
+Reading the documentation, has in this situation, revealed something important about the data. It is easy to open this dataset and assume that each row of data was the sentencing for a distinct and unique case. However, this is not correct! We can see there are many cases that appear in the data more than once. 
+
+Below, we first create a list of all distinct values of the `CASE_ID` column using the `unique()` function. Then, in the same line of code, we count how many there are using `length()`.
+
+```{r}
+length(unique(sentence$CASE_ID))
+```
+
+This results in `r length(unique(sentence$CASE_ID))` unique values, far fewer than the 
+`r nrow(sentence)` rows of data. 
+
+### Breaking Apart Confusing Code
+
+If the code above was tough for you to follow, try break it apart into its component pieces. For instance, what happens if you just run the following line:
+
+```
+unique(c("cat", "dog", "fish, "cat))
+```
+
+Does this help better illustrate how `unique()` is working? Now trying running `length()` and `unique()` together, like below.
+
+```
+length(unique(c("cat", "dog", "fish, "cat)))
+```
+
+### Interpreting the Level Of the Data
+
+In this data, one row is actually defined by the `CHARGE_ID` variable. This is to say that each row of data, or observation, is one unique charge resulting in sentencing, with potentially several or many charges per case.
+
+This is important, since if we were to simply look a histogram of age across this dataset, we might 
+
+
+## We can see more charges per person at younger ages, so our original histogram was skewed to the left.
+sentence %>% group_by(CASE_ID) %>% 
+  summarize(age = mean(AGE_AT_INCIDENT), count=n()) %>% 
+  ggplot(aes(age, count)) + geom_point()
+
+
+
+sentence %>% group_by(CASE_ID, AGE_AT_INCIDENT) %>%
+  summarize(count=n()) %>%
+  filter(count < 15) %>%
+  ggplot(aes(count)) + geom_histogram()
+
+
+
+```{r}
+hist(sentence$AGE_AT_INCIDENT)
+# Or
+# ggplot(sentence, aes(AGE_AT_INCIDENT)) + geom_histogram()
+```
+
+
+
+
+
+## Filtering The Data
+ 
+We can use the `filter()` function to look at only some rows of the data. Below, I have created several smaller datasets from the original. Each new dataset, on the left of the assignment operator `<-` is composed of the rows from the original dataset that meet the criteria specified in the `filter() function`.
+
+```{r}
+sentence_female <- filter(sentence, GENDER == "Female") ## == means exactly equal to
+sentence_under21 <- filter(sentence, AGE_AT_INCIDENT <= 21) ## <= means less than or equal to
+#sentence_probation <- filter(sentence, SENTENCE_TYPE %in% c("Probation", "2nd Chance Probation")) ## %in% means 'is one of'
+```
+
+How can you be sure that these filters worked as you expected? Use the `table()` function and the `hist()` function on the newly created datasets (sentence_female, sentence_under21, and  sentence_probation) to ensure you understand what the filters accomplished.
+
+If you were able to confirm what was happening above, try this on your own. Write a filter that only looks at cases longer than one year (using `LENGTH_OF_CASE_in_Days`) and/or sentencing imposed on Hispanic persons.
+
+
+\pagebreak
+
+## Appendix 1: R Terminology
+
+- Comments: Everything after a `#` (a hashtag) in your code will have no effect if you run it in R. Thus, you can use `#` hashtags to write notes to yourself and others, making your code more readable. 
+- Working Directory : The folder on your computer that R is currently working in. It will only check this folder for files to load, and will write any new files to this folder.
+- Dataframe : the R equivalent of an excel file. It holds relational data in rows and columns that can contain numbers or strings.
+- Assignment Operator `<-` : Gives the value on the right to the object on the left.
+- Function : Anything that completes a task or set of tasks in R is a function. Most functions have a name, and take one or more arguments within parentheses. Examples include 'head()', 'colnames()', 'hist()', 'mean()', 'and plot()'  
+- Argument : An input or an option that affects the result of a function. This often includes the data that the function runs on, AND specifications/options as to what the function should do. For example:
+
+`hist(dataframe$column, main = "A Histogram")`
+
+The function above (hist is a function for making a histogram) above is given two arguments, separated by a comma. The first is 'data$column', telling the histogram to use the data in this column to make a histogram. The second arguments is 'main = "A Histogram"', which is activating an option, and giving the histogram a main title.
+
+### Mathematical Operators in R:
+
+```{r}
+2+2 # Addition with the plus sign `+`
+6-3 # Subtraction with the - sign
+4*2 # The asterisk (*) indicates multiplication
+12/3 # Division usses the backslash
+3^3 ## This caret `^` means exponentiation, so this is 3 to the third power.
+```
+
+
+
 
 \pagebreak 
  
-## Pertinent Resources
+## Appendix 2: Pertinent Resources
 
 **Introduction to haven package** [Link](https://blog.rstudio.org/2015/03/04/haven-0-1-0/)
 
@@ -53,7 +195,6 @@ library(tidyverse)
 
 ***
 
-In the image above [Figure 1], you can see how to navigate to the RStudio Cheat Sheets for R's very useful data manipulation packages, `dplyr` and `tidyr`. These packages, as well as `stringr`, are also covered in detail in the free ebook [R for Data Science](http://r4ds.had.co.nz/transform.html).
-
+In the image above [Figure 1], you can see how to navigate to the RStudio Cheat Sheets for R's very useful data manipulation packages, `dplyr` and `tidyr`. These packages, as well as `stringr`, are also covered in detail in the excellent free ebook [R for Data Science](http://r4ds.had.co.nz/transform.html).
 
 ![Cheat Sheets](./cheat.png)
