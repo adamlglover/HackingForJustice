@@ -140,8 +140,37 @@ Take a minute to break apart the second line of code below. Can you intuit what 
 prop.table(table(cases$INCIDENT_CITY == "Chicago", useNA="always"))
 ```
 
+\pagebreak
+
+## Filtering The Data
+ 
+We can use the `filter()` function to look at only some rows of the data. Below, I have created several smaller datasets from the original. Each new dataset, on the left of the assignment operator `<-` is composed of the rows from the original dataset that meet the criteria specified in the `filter() function`.
+
+```{r}
+sentence_female <- filter(sentence, GENDER == "Female") ## == means exactly equal to
+sentence_under21 <- filter(sentence, AGE_AT_INCIDENT <= 21) ## <= means less than or equal to
+sentence_probation <- filter(sentence, SENTENCE_TYPE %in% c("Probation", "2nd Chance Probation")) 
+## %in% means 'is one of'
+```
+
+How can you be sure that these filters worked as you expected? Use the `table()` function and the `hist()` function on the newly created datasets (sentence_female, sentence_under21, and  sentence_probation) to ensure you understand what the filters accomplished.
+
+> If you were able to confirm what was happening above, try this on your own. Write a filter that only looks at cases longer than one year (using `LENGTH_OF_CASE_in_Days`) and/or sentencing imposed on Hispanic persons.
+
+### New Column Creation 
+
+We can use the mutate function to create a new column of data. Below, I create a column called `HISPANIC` that is `TRUE` for observations with a hispanic participant. 
+```{r}
+sentence <- mutate(sentence, HISPANIC = ifelse(RACE %in% c("HISPANIC", "White [Hispanic or Latino]", "White/Black [Hispanic or Latino]"), TRUE, FALSE))
+table(sentence$RACE, sentence$HISPANIC)
+```
+
+> Can you create a new variable for sentences resulting in over a two year commitment to prison? You will need to look at the `SENTENCE_TYPE`, `COMMITMENT_TERM`, and `COMMITMENT_UNIT` variables to do so.
 
 \pagebreak
+
+
+
 
 ## TO DO NEXT:
 
@@ -178,19 +207,7 @@ hist(sentence$AGE_AT_INCIDENT)
 
 
 
-## Filtering The Data
- 
-We can use the `filter()` function to look at only some rows of the data. Below, I have created several smaller datasets from the original. Each new dataset, on the left of the assignment operator `<-` is composed of the rows from the original dataset that meet the criteria specified in the `filter() function`.
 
-```{r}
-sentence_female <- filter(sentence, GENDER == "Female") ## == means exactly equal to
-sentence_under21 <- filter(sentence, AGE_AT_INCIDENT <= 21) ## <= means less than or equal to
-#sentence_probation <- filter(sentence, SENTENCE_TYPE %in% c("Probation", "2nd Chance Probation")) ## %in% means 'is one of'
-```
-
-How can you be sure that these filters worked as you expected? Use the `table()` function and the `hist()` function on the newly created datasets (sentence_female, sentence_under21, and  sentence_probation) to ensure you understand what the filters accomplished.
-
-If you were able to confirm what was happening above, try this on your own. Write a filter that only looks at cases longer than one year (using `LENGTH_OF_CASE_in_Days`) and/or sentencing imposed on Hispanic persons.
 
 \pagebreak
 
