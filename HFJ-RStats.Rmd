@@ -178,7 +178,6 @@ Remember you can give the `ifelse()` function a try on its own if you want to se
 
 Probably the next parts of this to include are:
 
-- Mutate (easy)
 - Arrange (easy)
 - Histogram? Basic Plots? (Only if no one else is)
 - Grouped Aggregation
