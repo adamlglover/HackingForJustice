@@ -165,6 +165,8 @@ sentence <- mutate(sentence, HISPANIC = ifelse(RACE %in% c("HISPANIC", "White [H
 table(sentence$RACE, sentence$HISPANIC)
 ```
 
+Remember you can give the `ifelse()` function a try on its own if you want to see what it might do. Try playing around with different versions of: `ifelse(5 > 2, "Yes!", "No!")`
+
 > Can you create a new variable for sentences resulting in over a two year commitment to prison? You will need to look at the `SENTENCE_TYPE`, `COMMITMENT_TERM`, and `COMMITMENT_UNIT` variables to do so.
 
 \pagebreak
