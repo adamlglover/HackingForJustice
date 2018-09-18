@@ -19,3 +19,4 @@ The State's Attoneys Office (SAO) has four datasets at the case level - which me
 #### Sentencing Data
 
 - LENGTH_OF_CASE_in_Days has a minimum of -36475 and 338 rows in which that value is less than zero.
+- 46 parsing failures in sentencing data that I have not yet investigated
