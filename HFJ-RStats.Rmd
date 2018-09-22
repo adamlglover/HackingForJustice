@@ -170,17 +170,18 @@ prop.table(table(cases$INCIDENT_CITY == "Chicago", useNA="always"))
 
 ### New Column Creation 
 
-We can use the mutate function to create a new column of data. Below, I create a column called `HISPANIC` that is `TRUE` for observations with a hispanic participant. 
+We can create a new column by simple assigning (with `<-`) a value to a new named column. Below, I create a column called `HISPANIC` that is `TRUE` for observations with a hispanic participant based on the `RACE` column.
+
 ```{r}
-#sentence <- mutate(sentence, HISPANIC = ifelse(RACE %in% c("HISPANIC", "White [Hispanic or Latino]", "White/Black [Hispanic or Latino]"), TRUE, FALSE))
-# table(sentence$RACE, sentence$HISPANIC)
+sentence$HISPANIC <- ifelse(sentence$RACE %in% 
+      c("HISPANIC", "White [Hispanic or Latino]", "White/Black [Hispanic or Latino]"), TRUE, FALSE)
+
+table(sentence$RACE, sentence$HISPANIC)
 ```
 
 Remember you can give the `ifelse()` function a try on its own if you want to see what it might do. Try playing around with different versions of: `ifelse(5 > 2, "Yes!", "No!")`
 
 > Can you create a new variable for sentences resulting in over a two year commitment to prison? You will need to look at the `SENTENCE_TYPE`, `COMMITMENT_TERM`, and `COMMITMENT_UNIT` variables to do so.
-
-\pagebreak
 
 ### Handling Missing Data
 
@@ -198,18 +199,19 @@ table(sentence$LENGTH_OF_CASE_in_Days < 0)
 
 I think we can reasonably assume that cases are not lasting negative time, so we should remove these values before running any analysis (like calculating the average length of case).
 
->> Can you use mutate() to replace negative values of `LENGTH_OF_CASE_in_Days` with missing values (NA)? You might make a new column called `LENGTH_OF_CASE_ALT` to do this.
+We can combine our knowledge of column creation and indexing to replace negative values of `LENGTH_OF_CASE_in_Days` with missing values (NA). We will make a new column called `LENGTH_OF_CASE_ALT` to hold this corrected column.
 
 ```{r}
-# sentence <- mutate(sentence, LENGTH_OF_CASE_ALT = ifelse(LENGTH_OF_CASE_in_Days < 0, NA, LENGTH_OF_CASE_in_Days))
+sentence$LENGTH_OF_CASE_ALT <- sentence$LENGTH_OF_CASE_in_Days
+sentence$LENGTH_OF_CASE_ALT[which(sentence$LENGTH_OF_CASE_in_Days < 0)] <- NA
 ```
 
-Run the line with the combination of `table()` and `is.na()` again, did the number of missing values increase? It should have - always make sure to check your work!
+Run the line with the combination of `table()` and `is.na()` on our new column of data, did the number of missing values increase? It should have - always make sure to check your work!
 
 Alternatively, we can use hist to make a histogram (more on this in the next section). You should see an image like the one below if it ran correctly.
 
 ```{r}
-# hist(sentence$LENGTH_OF_CASE_ALT)
+hist(sentence$LENGTH_OF_CASE_ALT)
 ```
 
 
