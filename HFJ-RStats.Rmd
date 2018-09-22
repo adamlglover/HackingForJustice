@@ -160,7 +160,7 @@ mean(cases$AGE_AT_INCIDENT, na.rm=TRUE)
 median(cases$AGE_AT_INCIDENT, na.rm=TRUE)
 ```
 
-So, for any case, we can expect a participant to be aged ```r median(cases$AGE_AT_INCIDENT, na.rm=TRUE)```, with an average age of a participant in a case being ```r median(cases$AGE_AT_INCIDENT, na.rm=TRUE)```.
+So, for any case, we can expect a participant to be aged ```r median(cases$AGE_AT_INCIDENT, na.rm=TRUE)```, with an average age of a participant in a case being ```r mean(cases$AGE_AT_INCIDENT, na.rm=TRUE)```.
 
 Take a minute to break apart the second line of code below. Can you intuit what the numbers being returned mean?
 
