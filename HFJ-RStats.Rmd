@@ -28,13 +28,13 @@ The State's Attoneys Office (SAO) has four datasets at the case level - which me
 
 ## Loading Data Into R:
 
-First, we need to load the sentencing data into R. The `read_csv()` function loads the data into R, and the assignment operator `<-` saves the data under the name `sentence`, which we will use to refer to it from here forward. Data loaded into R is called a `dataframe`, and we will use that terminology going forward.
+First, we need to load the sentencing data into R. The `read.csv()` function loads the data into R, and the assignment operator `<-` saves the data under the name `sentence`, which we will use to refer to it from here forward. Data loaded into R is called a `dataframe`, and we will use that terminology going forward.
 
 ```{r message=FALSE, warning=FALSE}
 # Note: You can write comments in your R code following a hashtag `#`. 
 # Anything after a hashtag will not run, so you can use comments to write 
 # notes to yourself, explaining what your code does (or should do!).
-sentence <- read_csv("Sentencing.csv")
+sentence <- read.csv("Sentencing.csv")
 ```
 
 We can use simple functions, like `nrow()` and `ncol` to see how many rows and columns of data there are in this dataframe. Note, you must use all lowercase letters for `sentence` and the function names, as R is case sensitive.
@@ -44,10 +44,10 @@ nrow(sentence)
 ncol(sentence)
 ```
 
-We can visually inspect our loaded dataframe with the `glimpse()` function. This prints each column, or variable, in the dataset on each row. It also tells us what type of variable is contained in the column (e.g. a `dbl` means a continuous number, whereas a `chr` means characters, which could be letters, numbers or a sentence). Finally, this function shows us some of the first values in each column, listed from left to right.
+We can visually inspect our loaded dataframe with the `head()` function. This print the first six rows of the dataset, with columns print left to right and wrapping down when the R console runs out of space.
 
 ```{r}
-glimpse(sentence)
+head(sentence)
 ```
 
 \pagebreak
@@ -98,20 +98,28 @@ length(unique(c("cat", "dog", "fish", "cat")))
 
 In this data, one row is actually defined by the `CHARGE_ID` variable. This is to say that each row of data, or observation, is one unique charge resulting in sentencing, with potentially several or many charges per case.
 
-This is important, since if we were to simply look at the average age across this dataset, we might substantially misinterpret the resulting number. Instead, lets select a group of columns that will be consistent across each case. Below, we use the `select()` function to grab only a few of the columns.
+This is important, since if we were to simply look at the average age across this dataset, we might substantially misinterpret the resulting number. Instead, lets select a group of columns that will be consistent across each case. Below, use indexing (this is the square brackets `[]`) to select only some of the variables and put them in a new dataframe.
+
+
+## Indexing a Dataframe
+
+We can use the square brackets to only select some small piece of our entire dataframe. Here are some quick examples. 
+
+
 
 ### Columnar Selection
 
 ```{r}
-cases <- select(sentence, CASE_ID, CASE_PARTICIPANT_ID, AGE_AT_INCIDENT, 
-                GENDER, RACE, LENGTH_OF_CASE_in_Days, INCIDENT_CITY)
+cases <- sentence[,c("CASE_ID", "CASE_PARTICIPANT_ID", 
+                     "AGE_AT_INCIDENT", "GENDER", "RACE", 
+                     "LENGTH_OF_CASE_in_Days","INCIDENT_CITY")]
 ncol(cases)
 ```
 
 Now, we can grab only the rows that are unique across these values, which should be one participant per case. From that dataframe, we can use various functions for descriptive statistics, like `mean()`, `median()`,  and `fivenum()`.  We use the addition argument `na.rm = TRUE` to tell R to ignore missing values in these calculations.
 
 ```{r}
-cases <- distinct(cases)
+cases <- cases[!duplicated(cases),]
 dim(cases)
 
 mean(cases$AGE_AT_INCIDENT, na.rm=TRUE)
@@ -129,7 +137,7 @@ prop.table(table(cases$INCIDENT_CITY == "Chicago", useNA="always"))
 \pagebreak
 
 ## Filtering The Data
- 
+
 We can use the `filter()` function to look at only some rows of the data. Below, I have created several smaller datasets from the original. Each new dataset, on the left of the assignment operator `<-` is composed of the rows from the original dataset that meet the criteria specified in the `filter() function`.
 
 ```{r}
@@ -192,16 +200,17 @@ hist(sentence$LENGTH_OF_CASE_ALT)
 
 ## Merging On Another Dataset
 
-Very frequently, the data you are more interested or curious in will not be made available 
-
-A very common task in data manip
-Let's load in a different dataset from the SAO:
+Very frequently, the data you are more interested or curious in will not be made available in just one dataset. So acommon task is to combine two datasets from different sources. Let's load in a different dataset from the SAO and merge this onto our sentencing data.
 
 ```{r message=FALSE, warning=FALSE}
-initiation <- read_csv("Dispositions.csv")
+initiation <- read.csv("Dispositions.csv")
 ```
 
-Always make sure to carefully examine new datasets. This should at least including using functions like `glimpse()` or `View()` to look at the data, as well as explorations we have used today like `table()`, `hist()`, and `unique()`. 
+Always make sure to carefully examine new datasets. This should at least including using functions like `head()` or `View()` to look at the data, as well as explorations we have used today like `table()`, `hist()`, and `unique()`. 
+
+Once you have done this, we can merge on the dispositions data with the `merge()` function.
+
+
 
 
 
