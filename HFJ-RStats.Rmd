@@ -28,13 +28,7 @@ The State's Attoneys Office (SAO) has four datasets at the case level - which me
 
 ## Loading Data Into R:
 
-For our introduction, we will use the tidyverse, which is a set of R packages that enable quick and (somewhat) intuitive ways to explore and manipulate date in R. If you have already install the tidyverse using `install.packages("tidyverse")`, then you should just need to run the code below.
-
-```{r message=FALSE}
-library(tidyverse)
-```
-
-Next, load the sentencing data into R. The `read_csv()` function loads the data into R, and the assignment operator `<-` saves the data under the name `sentence`, which we will use to refer to it from here forward. Data loaded into R is called a `dataframe`, and we will use that terminology going forward.
+First, we need to load the sentencing data into R. The `read_csv()` function loads the data into R, and the assignment operator `<-` saves the data under the name `sentence`, which we will use to refer to it from here forward. Data loaded into R is called a `dataframe`, and we will use that terminology going forward.
 
 ```{r message=FALSE, warning=FALSE}
 # Note: You can write comments in your R code following a hashtag `#`. 
@@ -187,34 +181,20 @@ sentence <- mutate(sentence, LENGTH_OF_CASE_ALT = ifelse(LENGTH_OF_CASE_in_Days 
 
 Run the line with the combination of `table()` and `is.na()` again, did the number of missing values increase? It should have - always make sure to check your work!
 
-Alternatively, we can use hist to make a histogram (more on this in the next section). You should see an image like this if it ran correctly:
+Alternatively, we can use hist to make a histogram (more on this in the next section). You should see an image like the one below if it ran correctly.
 
 ```{r}
 hist(sentence$LENGTH_OF_CASE_ALT)
 ```
 
 
-
-
-
-
-## TO DO NEXT:
-
-Probably the next parts of this to include are:
-
-- Arrange (easy)
-- Grouped Aggregation
-- Merging on a different SAO dataset (maybe too much?) Guidance on which dataset would be good. My instinct is initiation and hope CASE_ID or CHARGE_ID works there.
-
-
-
-
-
-
 \pagebreak
 
 ## Merging On Another Dataset
 
+Very frequently, the data you are more interested or curious in will not be made available 
+
+A very common task in data manip
 Let's load in a different dataset from the SAO:
 
 ```{r message=FALSE, warning=FALSE}
@@ -223,6 +203,27 @@ initiation <- read_csv("Dispositions.csv")
 
 Always make sure to carefully examine new datasets. This should at least including using functions like `glimpse()` or `View()` to look at the data, as well as explorations we have used today like `table()`, `hist()`, and `unique()`. 
 
+
+
+
+\pagebreak
+
+## Loading New Packages
+
+For our introduction, used the normal functionality available in R. However, one of the great advantages of working in R is tha ability to load new packages (pre-defined functionality) that others have written. The `tidyverse` is a great example of this advantage of open source languages. The  `tidyverse`   which is a set of R packages that enable quick and (somewhat) intuitive ways to explore and manipulate date in R. To install and then load these packages, run the code below.
+
+```{r message=FALSE}
+install.packages("tidyverse")
+library(tidyverse)
+```
+
+We now have new functions available that we could not use before, like `glimpse()`, for cleanly displaying our data. 
+
+```{r}
+glimpse(sentence)
+```
+
+If you want to further your understanding of R for analyzing data, my first suggestion is to read (and practice) [R for Data Science](http://r4ds.had.co.nz/), which teaches how to use the packages in the `tidyverse`.
 
 
 
@@ -235,6 +236,7 @@ Always make sure to carefully examine new datasets. This should at least includi
 - Working Directory : The folder on your computer that R is currently working in. It will only check this folder for files to load, and will write any new files to this folder.
 - Dataframe : the R equivalent of an excel file. It holds relational data in rows and columns that can contain numbers or strings.
 - Assignment Operator `<-` : Gives the value on the right to the object on the left.
+- Package : An R package is a collection of R code that adds new functionality and functions.
 - Function : Anything that completes a task or set of tasks in R is a function. Most functions have a name, and take one or more arguments within parentheses. Examples include 'head()', 'colnames()', 'hist()', 'mean()', 'and plot()'  
 - Argument : An input or an option that affects the result of a function. This often includes the data that the function runs on, AND specifications/options as to what the function should do. For example:
 
