@@ -62,7 +62,6 @@ Some of the data is self-explanatory, such as the `SENTENCE_TYPE` column, which 
 
 ```{r}
 table(sentence$SENTENCE_TYPE)
-# or count(sentences, SENTENCE_TYPE)
 ```
 
 ### Remember to Use the Data Documentation
@@ -73,7 +72,6 @@ It's important to consistently use the data documentation, sometimes called a co
 
 ```{r}
 table(sentence$PRIMARY_CHARGE)
-# or count(sentences, PRIMARY_CHARGE)
 ```
 
 ## Level Of The Data
@@ -94,12 +92,12 @@ This results in `r length(unique(sentence$CASE_ID))` unique values, far fewer th
 If the code above was tough for you to follow, try break it apart into its component pieces. For instance, what happens if you just run the following line:
 
 ```
-unique(c("cat", "dog", "fish, "cat))
+unique(c("cat", "dog", "fish", "cat"))
 ```
 Does this help better illustrate how `unique()` is working? Now trying running `length()` and `unique()` together, like below.
 
 ```
-length(unique(c("cat", "dog", "fish, "cat)))
+length(unique(c("cat", "dog", "fish", "cat")))
 ```
 
 ### Interpreting the Level Of the Data
@@ -116,7 +114,7 @@ cases <- select(sentence, CASE_ID, CASE_PARTICIPANT_ID, AGE_AT_INCIDENT,
 ncol(cases)
 ```
 
-Now, we can grab only the rows that are unique across these values, which should be one participant per case. From that dataframe, we can use various functions for descriptive statistics, like `mean()`, `median()`,  and `fivenum()`.  We use the addition argument `na.rm = TRUE` to tell R to ignore missing values in these calculaions.
+Now, we can grab only the rows that are unique across these values, which should be one participant per case. From that dataframe, we can use various functions for descriptive statistics, like `mean()`, `median()`,  and `fivenum()`.  We use the addition argument `na.rm = TRUE` to tell R to ignore missing values in these calculations.
 
 ```{r}
 cases <- distinct(cases)
@@ -127,12 +125,6 @@ median(cases$AGE_AT_INCIDENT, na.rm=TRUE)
 ```
 
 So, for any case, we can expect a participant to be aged ```r median(cases$AGE_AT_INCIDENT, na.rm=TRUE)```, with an average age of a participant in a case being ```r median(cases$AGE_AT_INCIDENT, na.rm=TRUE)```.
-
-
-The  `fivenum()` function returns the minimum, 25th percentile, median, 75th percentile, and maximum.
-```{r}
-fivenum(cases$AGE_AT_INCIDENT, na.rm=TRUE)
-```
 
 Take a minute to break apart the second line of code below. Can you intuit what the numbers being returned mean?
 
@@ -171,6 +163,38 @@ Remember you can give the `ifelse()` function a try on its own if you want to se
 
 \pagebreak
 
+### Handling Missing Data
+
+Many of the values for the `LENGTH_OF_CASE_in_Days` are already missing, as we can see below. The `is.na()` function is checking if each individual row of data contains an `NA` value (R's value for missing data). 
+
+```{r}
+table(is.na(sentence$LENGTH_OF_CASE_in_Days))
+```
+
+So there are `r sum(is.na(sentence$LENGTH_OF_CASE_in_Days))` missing values for this column. However, there appear to be additional rows with infeasible values, like having negative case lengths.
+
+```{r}
+table(sentence$LENGTH_OF_CASE_in_Days < 0)
+```
+
+I think we can reasonably assume that cases are not lasting negative time, so we should remove these values before running any analysis (like calculating the average length of case).
+
+>> Can you use mutate() to replace negative values of `LENGTH_OF_CASE_in_Days` with missing values (NA)? You might make a new column called `LENGTH_OF_CASE_ALT` to do this.
+
+```{r }
+sentence <- mutate(sentence, LENGTH_OF_CASE_ALT = ifelse(LENGTH_OF_CASE_in_Days < 0, NA, LENGTH_OF_CASE_in_Days))
+```
+
+Run the line with the combination of `table()` and `is.na()` again, did the number of missing values increase? It should have - always make sure to check your work!
+
+Alternatively, we can use hist to make a histogram (more on this in the next section). You should see an image like this if it ran correctly:
+
+```{r}
+hist(sentence$LENGTH_OF_CASE_ALT)
+```
+
+
+
 
 
 
@@ -179,31 +203,8 @@ Remember you can give the `ifelse()` function a try on its own if you want to se
 Probably the next parts of this to include are:
 
 - Arrange (easy)
-- Histogram? Basic Plots? (Only if no one else is)
 - Grouped Aggregation
 - Merging on a different SAO dataset (maybe too much?) Guidance on which dataset would be good. My instinct is initiation and hope CASE_ID or CHARGE_ID works there.
-
-
-We can see more charges per person at younger ages, so our original histogram was skewed to the left. `echo=FALSE` is on here.
-
-```{r ech0=FALSE}
-sentence %>% group_by(CASE_ID) %>% 
-  summarize(age = mean(AGE_AT_INCIDENT), count=n()) %>% 
-  ggplot(aes(age, count)) + geom_point()
-
-sentence %>% group_by(CASE_ID, AGE_AT_INCIDENT) %>%
-  summarize(count=n()) %>%
-  filter(count < 15) %>%
-  ggplot(aes(count)) + geom_histogram()
-```
-
-
-```{r}
-hist(sentence$AGE_AT_INCIDENT)
-# Or
-# ggplot(sentence, aes(AGE_AT_INCIDENT)) + geom_histogram()
-```
-
 
 
 
@@ -217,12 +218,10 @@ hist(sentence$AGE_AT_INCIDENT)
 Let's load in a different dataset from the SAO:
 
 ```{r message=FALSE, warning=FALSE}
-initiation <- read_csv("Initiation.csv")
+initiation <- read_csv("Dispositions.csv")
 ```
 
 Always make sure to carefully examine new datasets. This should at least including using functions like `glimpse()` or `View()` to look at the data, as well as explorations we have used today like `table()`, `hist()`, and `unique()`. 
-
-
 
 
 
