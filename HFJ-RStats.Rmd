@@ -103,8 +103,38 @@ This is important, since if we were to simply look at the average age across thi
 
 ## Indexing a Dataframe
 
-We can use the square brackets to only select some small piece of our entire dataframe. Here are some quick examples. 
+We can use the square brackets to only select some small piece of our entire dataframe. We specify which rows and columns we want in the order of `[rows, columns]`. Here are some quick examples. 
+ 
+```{r echo=FALSE}
+## Get the first five rows of data:
+sentence[1:5,]
 
+## Get the first ten rows of the second column of the data:
+sentence[1:10,2]
+
+## Get the first five rows of the column named "ARREST_DATE" of the data:
+sentence[1:5,"ARREST_DATE"]
+
+## Run the line below - can you understand why it returns this result?
+sentence[100:115,c("LAW_ENFORCEMENT_AGENCY","ARREST_DATE")]
+```
+
+
+## Filtering The Data
+
+We can use our new understanding of indexing and the `which()` function to filter the dataset based on the values in the columns, which is far more useful than doing this based on row numbers.
+
+Each new dataset, on the left of the assignment operator `<-` is composed of the rows from the original dataset that meet the criteria specified in the square brackets
+
+```{r}
+sentence_female <- sentence[which(sentence$GENDER == "Female"),] ## == means exactly equal to
+sentence_under21 <- sentence[which(sentence$AGE_AT_INCIDENT <= 21),] ## <= means less than or equal to
+sentence_probation <- sentence[which(sentence$SENTENCE_TYPE  %in% c("Probation", "2nd Chance Probation")),] ## %in% means 'is one of'
+```
+
+How can you be sure that these filters worked as you expected? Use the `table()` function and the `hist()` function on the newly created datasets (sentence_female, sentence_under21, and  sentence_probation) to ensure you understand what the filters accomplished.
+
+> If you were able to confirm what was happening above, try this on your own. Write a filter that only looks at cases longer than one year (using `LENGTH_OF_CASE_in_Days`) and/or sentencing imposed on Hispanic persons.
 
 
 ### Columnar Selection
@@ -134,29 +164,12 @@ Take a minute to break apart the second line of code below. Can you intuit what 
 prop.table(table(cases$INCIDENT_CITY == "Chicago", useNA="always"))
 ```
 
-\pagebreak
-
-## Filtering The Data
-
-We can use the `filter()` function to look at only some rows of the data. Below, I have created several smaller datasets from the original. Each new dataset, on the left of the assignment operator `<-` is composed of the rows from the original dataset that meet the criteria specified in the `filter() function`.
-
-```{r}
-sentence_female <- filter(sentence, GENDER == "Female") ## == means exactly equal to
-sentence_under21 <- filter(sentence, AGE_AT_INCIDENT <= 21) ## <= means less than or equal to
-sentence_probation <- filter(sentence, SENTENCE_TYPE %in% c("Probation", "2nd Chance Probation")) 
-## %in% means 'is one of'
-```
-
-How can you be sure that these filters worked as you expected? Use the `table()` function and the `hist()` function on the newly created datasets (sentence_female, sentence_under21, and  sentence_probation) to ensure you understand what the filters accomplished.
-
-> If you were able to confirm what was happening above, try this on your own. Write a filter that only looks at cases longer than one year (using `LENGTH_OF_CASE_in_Days`) and/or sentencing imposed on Hispanic persons.
-
 ### New Column Creation 
 
 We can use the mutate function to create a new column of data. Below, I create a column called `HISPANIC` that is `TRUE` for observations with a hispanic participant. 
 ```{r}
-sentence <- mutate(sentence, HISPANIC = ifelse(RACE %in% c("HISPANIC", "White [Hispanic or Latino]", "White/Black [Hispanic or Latino]"), TRUE, FALSE))
-table(sentence$RACE, sentence$HISPANIC)
+#sentence <- mutate(sentence, HISPANIC = ifelse(RACE %in% c("HISPANIC", "White [Hispanic or Latino]", "White/Black [Hispanic or Latino]"), TRUE, FALSE))
+# table(sentence$RACE, sentence$HISPANIC)
 ```
 
 Remember you can give the `ifelse()` function a try on its own if you want to see what it might do. Try playing around with different versions of: `ifelse(5 > 2, "Yes!", "No!")`
@@ -173,7 +186,7 @@ Many of the values for the `LENGTH_OF_CASE_in_Days` are already missing, as we c
 table(is.na(sentence$LENGTH_OF_CASE_in_Days))
 ```
 
-So there are `r sum(is.na(sentence$LENGTH_OF_CASE_in_Days))` missing values for this column. However, there appear to be additional rows with infeasible values, like having negative case lengths.
+So there are ```r sum(is.na(sentence$LENGTH_OF_CASE_in_Days))``` missing values for this column. However, there appear to be additional rows with infeasible values, like having negative case lengths.
 
 ```{r}
 table(sentence$LENGTH_OF_CASE_in_Days < 0)
@@ -183,8 +196,8 @@ I think we can reasonably assume that cases are not lasting negative time, so we
 
 >> Can you use mutate() to replace negative values of `LENGTH_OF_CASE_in_Days` with missing values (NA)? You might make a new column called `LENGTH_OF_CASE_ALT` to do this.
 
-```{r }
-sentence <- mutate(sentence, LENGTH_OF_CASE_ALT = ifelse(LENGTH_OF_CASE_in_Days < 0, NA, LENGTH_OF_CASE_in_Days))
+```{r}
+# sentence <- mutate(sentence, LENGTH_OF_CASE_ALT = ifelse(LENGTH_OF_CASE_in_Days < 0, NA, LENGTH_OF_CASE_in_Days))
 ```
 
 Run the line with the combination of `table()` and `is.na()` again, did the number of missing values increase? It should have - always make sure to check your work!
@@ -192,7 +205,7 @@ Run the line with the combination of `table()` and `is.na()` again, did the numb
 Alternatively, we can use hist to make a histogram (more on this in the next section). You should see an image like the one below if it ran correctly.
 
 ```{r}
-hist(sentence$LENGTH_OF_CASE_ALT)
+# hist(sentence$LENGTH_OF_CASE_ALT)
 ```
 
 
