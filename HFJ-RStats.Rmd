@@ -46,13 +46,13 @@ ncol(sentence)
 
 We can visually inspect our loaded dataframe with the `head()` function. This print the first six rows of the dataset, with columns print left to right and wrapping down when the R console runs out of space. Since this would take a lot of room in this document, the output is not printed below.
 
-```{r echo=TRUE, include=FALSE}
+```{r echo=TRUE, results='hide'}
 head(sentence)
 ```
 
 By default, `head()` prints out six row of data, but note that you can affect that by changing the `n` argument, as seen below. `head()` is a function (code that does something), and `n` is what is called an 'argument', which you can think of as an option that alters how a function works.
 
-```{r echo=TRUE, include=FALSE}
+```{r echo=TRUE, results='hide'}
 head(sentence, n=10)
 ```
 
@@ -109,7 +109,7 @@ This is important, since if we were to simply look at the average age across thi
 
 We can use the square brackets to only select some small piece of our entire dataframe. We specify which rows and columns we want in the order of `[rows, columns]`. Here are some quick examples. 
  
-```{r echo=FALSE}
+```{r echo=TRUE, results='hide'}
 ## Get the first five rows of data:
 sentence[1:5,]
 
