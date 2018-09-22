@@ -19,7 +19,7 @@ Since you installed R and RStudio during class, you should simply need to open R
 
 ## Download the SAO Data
 
-The State's Attoneys Office (SAO) has four datasets at the case level - which means each row of data describes one court case. You can find those datasets [under this search on the Cook County Data Catalog](https://datacatalog.cookcountyil.gov/browse?tags=state%27s%20attorney%20case-level). For your convenience, direct links to and descriptions of the datasets are provided here:
+The State's Attorneys Office (SAO) has four datasets at the case level - which means each row of data describes one court case. You can find those datasets [under this search on the Cook County Data Catalog](https://datacatalog.cookcountyil.gov/browse?tags=state%27s%20attorney%20case-level). For your convenience, direct links to and descriptions of the datasets are provided here:
 
 - [Sentencing](https://datacatalog.cookcountyil.gov/Courts/Sentencing/tg8v-tm6u): The sentencing data presented in this report reflects the judgment imposed by the court on people that have been found guilty. Each row represents a charge that has been sentenced.
 - [Dispositions](https://datacatalog.cookcountyil.gov/Courts/Dispositions/apwk-dzx8): The disposition data presented in this data reflects the culmination of the fact-finding process that leads to the resolution of a case. Each row represents a charge that has been disposed of.
@@ -66,7 +66,7 @@ table(sentence$SENTENCE_TYPE)
 
 However, other columns may not be so easily interpreted, and guessing can lead to mistakes. For instance, the `PRIMARY_CHARGE` column has values of "true" and "false", which is not clearly self-explanatory.
 
-It's important to consistently use the data documentation, sometimes called a codebook, to help learn about a dataset. Scrolling down on the [same page we found this data](https://datacatalog.cookcountyil.gov/Courts/Sentencing/tg8v-tm6u), we can see there are short descriptions of what each coulmn contains.
+It's important to consistently use the data documentation, sometimes called a code book, to help learn about a dataset. Scrolling down on the [same page we found this data](https://datacatalog.cookcountyil.gov/Courts/Sentencing/tg8v-tm6u), we can see there are short descriptions of what each column contains.
 
 ```{r}
 table(sentence$PRIMARY_CHARGE)
@@ -170,7 +170,7 @@ prop.table(table(cases$INCIDENT_CITY == "Chicago", useNA="always"))
 
 ### New Column Creation 
 
-We can create a new column by simple assigning (with `<-`) a value to a new named column. Below, I create a column called `HISPANIC` that is `TRUE` for observations with a hispanic participant based on the `RACE` column.
+We can create a new column by simple assigning (with `<-`) a value to a new named column. Below, I create a column called `HISPANIC` that is `TRUE` for observations with a Hispanic participant based on the `RACE` column.
 
 ```{r}
 sentence$HISPANIC <- ifelse(sentence$RACE %in% 
@@ -191,7 +191,7 @@ Many of the values for the `LENGTH_OF_CASE_in_Days` are already missing, as we c
 table(is.na(sentence$LENGTH_OF_CASE_in_Days))
 ```
 
-So there are ```r sum(is.na(sentence$LENGTH_OF_CASE_in_Days))``` missing values for this column. However, there appear to be additional rows with infeasible values, like having negative case lengths.
+So there are ```r sum(is.na(sentence$LENGTH_OF_CASE_in_Days))``` missing values for this column. However, there appear to be additional rows with unfeasible values, like having negative case lengths.
 
 ```{r}
 table(sentence$LENGTH_OF_CASE_in_Days < 0)
@@ -219,26 +219,32 @@ hist(sentence$LENGTH_OF_CASE_ALT)
 
 ## Merging On Another Dataset
 
-Very frequently, the data you are more interested or curious in will not be made available in just one dataset. So acommon task is to combine two datasets from different sources. Let's load in a different dataset from the SAO and merge this onto our sentencing data.
+Very frequently, the data you are more interested or curious in will not be made available in just one dataset. So a common task is to combine two datasets from different sources. Let's load in a different dataset from the SAO and merge this onto our sentencing data.
 
 ```{r message=FALSE, warning=FALSE}
-initiation <- read.csv("Dispositions.csv")
+dispositions <- read.csv("Dispositions.csv")
+nrow(dispositions)
+ncol(dispositions)
 ```
 
-Always make sure to carefully examine new datasets. This should at least including using functions like `head()` or `View()` to look at the data, as well as explorations we have used today like `table()`, `hist()`, and `unique()`. 
+Always make sure to carefully examine new datasets. This should at least including using functions like `head()` or `View()` to look at the data, as well as explorations we have used today like `table()`, `hist()`, and `unique()`. Once you have done this, we can merge this new dispositions data onto the sentencing data with the `merge()` function.
 
-Once you have done this, we can merge on the dispositions data with the `merge()` function.
+```{r}
+merged <- merge(sentence, dispositions, by=c("CASE_ID","CASE_PARTICIPANT_ID","CHARGE_ID"))
+dim(merged)
+```
 
+You should note the `merge()` function above is assuming that the columns `CASE_ID`, `CASE_PARTICIPANT_ID`, and `CHARGE_ID` exist in both datasets. If the column names were different you would need to specify these more explicitly, such as:
+`merge(data1, data2, by.x="column_in_data1", by.y="column_in_data2")`
 
-
-
+Now, you should be able to examine and explore the combined sentencing and disposition data - you will learn more approaches to this in the analyzing data module of the course you will have after lunch!
 
 
 \pagebreak
 
 ## Loading New Packages
 
-For our introduction, used the normal functionality available in R. However, one of the great advantages of working in R is tha ability to load new packages (pre-defined functionality) that others have written. The `tidyverse` is a great example of this advantage of open source languages. The  `tidyverse`   which is a set of R packages that enable quick and (somewhat) intuitive ways to explore and manipulate date in R. To install and then load these packages, run the code below.
+For our introduction, used the normal functionality available in R. However, one of the great advantages of working in R is the ability to load new packages (predefined functionality) that others have written. The `tidyverse` is a great example of this advantage of open source languages. The  `tidyverse`   which is a set of R packages that enable quick and (somewhat) intuitive ways to explore and manipulate date in R. To install and then load these packages, run the code below.
 
 ```{r message=FALSE}
 # install.packages("tidyverse")
@@ -247,7 +253,7 @@ library(tidyverse)
 
 We now have new functions available that we could not use before, like `glimpse()`, for cleanly displaying our data. 
 
-```{r}
+```{r R.options=list(max.print=30)}
 glimpse(sentence)
 ```
 
@@ -256,11 +262,9 @@ If you want to further your understanding of R for analyzing data, my first sugg
 
 
 
-\pagebreak
-
 ## Appendix 1: R Terminology
 
-- Comments: Everything after a `#` (a hashtag) in your code will have no effect if you run it in R. Thus, you can use `#` hashtags to write notes to yourself and others, making your code more readable. 
+- Comments: Everything after a `#` (a hash-tag) in your code will have no effect if you run it in R. Thus, you can use `#` hash-tags to write notes to yourself and others, making your code more readable. 
 - Working Directory : The folder on your computer that R is currently working in. It will only check this folder for files to load, and will write any new files to this folder.
 - Dataframe : the R equivalent of an excel file. It holds relational data in rows and columns that can contain numbers or strings.
 - Assignment Operator `<-` : Gives the value on the right to the object on the left.
@@ -283,8 +287,6 @@ The function above (hist is a function for making a histogram) above is given tw
 ```
 
 
-
-
 \pagebreak 
  
 ## Appendix 2: Pertinent Resources
@@ -303,6 +305,6 @@ The function above (hist is a function for making a histogram) above is given tw
 
 ***
 
-In the image above [Figure 1], you can see how to navigate to the RStudio Cheat Sheets for R's very useful data manipulation packages, `dplyr` and `tidyr`. These packages, as well as `stringr`, are also covered in detail in the excellent free ebook [R for Data Science](http://r4ds.had.co.nz/transform.html).
+In the image above [Figure 1], you can see how to navigate to the RStudio Cheat Sheets for R's very useful data manipulation packages, `dplyr` and `tidyr`. These packages, as well as `stringr`, are also covered in detail in the excellent free eBook [R for Data Science](http://r4ds.had.co.nz/transform.html).
 
 ![Cheat Sheets](./cheat.png)
