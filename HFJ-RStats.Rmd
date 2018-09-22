@@ -44,13 +44,17 @@ nrow(sentence)
 ncol(sentence)
 ```
 
-We can visually inspect our loaded dataframe with the `head()` function. This print the first six rows of the dataset, with columns print left to right and wrapping down when the R console runs out of space.
+We can visually inspect our loaded dataframe with the `head()` function. This print the first six rows of the dataset, with columns print left to right and wrapping down when the R console runs out of space. Since this would take a lot of room in this document, the output is not printed below.
 
-```{r}
+```{r echo=TRUE, include=FALSE}
 head(sentence)
 ```
 
-\pagebreak
+By default, `head()` prints out six row of data, but note that you can affect that by changing the `n` argument, as seen below. `head()` is a function (code that does something), and `n` is what is called an 'argument', which you can think of as an option that alters how a function works.
+
+```{r echo=TRUE, include=FALSE}
+head(sentence, n=10)
+```
 
 Some of the data is self-explanatory, such as the `SENTENCE_TYPE` column, which contains the type of the sentence that resulted in this judgement. Below, we use the `table()` function to create a frequency table - this tells us every value of the `SENTENCE_TYPE` column and how many times that value appears in the dataset. We use the `$` operator to refer to the `SENTENCE_TYPE` column within the `sentence` dataframe.
 
@@ -235,7 +239,7 @@ Once you have done this, we can merge on the dispositions data with the `merge()
 For our introduction, used the normal functionality available in R. However, one of the great advantages of working in R is tha ability to load new packages (pre-defined functionality) that others have written. The `tidyverse` is a great example of this advantage of open source languages. The  `tidyverse`   which is a set of R packages that enable quick and (somewhat) intuitive ways to explore and manipulate date in R. To install and then load these packages, run the code below.
 
 ```{r message=FALSE}
-install.packages("tidyverse")
+# install.packages("tidyverse")
 library(tidyverse)
 ```
 
